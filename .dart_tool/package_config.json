@@ -164,7 +164,7 @@
       "languageVersion": "3.5"
     },
     {
-      "name": "elite_escape",
+      "name": "task",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "3.9"
