@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
-import 'pages/products_page.dart';
+import 'package:task/view/profile_view.dart';
+
+
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: 'Pacifico'),
-      home: ProductsPage(),
+      title: 'Profile UI',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.grey[200],
+      ),
+      home: const ProfileScreen(),
     );
   }
 }

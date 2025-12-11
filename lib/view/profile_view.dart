@@ -1,31 +1,7 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Elite Escape Profile',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const ProfileScreen(),
-    );
-  }
-}
-
-// تعريف الألوان بناءً على لوحة الألوان المقدمة
-// HEX: #285260 (Dark Teal)
-// HEX: #5A9C92 (Medium Teal)
-// HEX: #B4D7D8 (Light Teal/Aqua)
-// HEX: #E0CFBF (Light Beige)
-// HEX: #AA8872 (Brown/Tan)
 
 const Color darkTeal = Color(0xFF285260);
 const Color mediumTeal = Color(0xFF5A9C92);
@@ -49,34 +25,36 @@ class ProfileScreen extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  darkTeal, // لون علوي مقارب للون الداكن في الباليت
+                  darkTeal,
                   mediumTeal,
                   lightAqua,
-                  lightBeige, // لون سفلي مقارب للون البيج في الباليت
+                  // lightBeige,
+                  tanBrown,
+                  
                 ],
-                stops: [0.0, 0.35, 0.65, 1.0], // توزيع الألوان في الخلفية
+                stops: [0.0, 0.35, 0.65, 1.0],
               ),
             ),
           ),
 
-          // 2. تراكب المباني (الشعار كـ Overlay) - اختياري لجمالية التصميم
+
           Positioned(
-            top: 50,
+            top:-60,
             left: 0,
             right: 0,
             child: Center(
               child: Opacity(
                 opacity: 0.2, // لتخفيف ظهور الشعار كخلفية
                 child: Image.asset(
-                  'assets/logo_buildings.png', // يُفترض أنك وضعت صورة الشعار (المباني فقط) في مجلد assets
-                  height: 200,
+                  'assets/images/logo_buildings.png', // يُفترض أنك وضعت صورة الشعار (المباني فقط) في مجلد assets
+                  height: 500,
                   fit: BoxFit.cover,
                 ),
               ),
             ),
           ),
 
-          // 3. المحتوى الرئيسي (بطاقة الملف الشخصي)
+     
           const Center(
             child: SingleChildScrollView(
               padding: EdgeInsets.only(top: 150), // مسافة من الأعلى لـ Avatar
@@ -84,9 +62,8 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
 
-          // 4. صورة Avatar في المنتصف ومستوى أعلى
           const Positioned(
-            top: 100, // تحديد موقع الـ Avatar فوق البطاقة
+            top: 100,
             left: 0,
             right: 0,
             child: Center(
@@ -99,21 +76,19 @@ class ProfileScreen extends StatelessWidget {
   }
 }
 
-// ------------------------------------------------------------------
-// مكون Avatar
-// ------------------------------------------------------------------
+
 class ProfileAvatar extends StatelessWidget {
   const ProfileAvatar({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 100,
-      height: 100,
+      width: 200,
+      height: 200,
       decoration: BoxDecoration(
-        color: lightBeige, // خلفية Avatar فاتحة
+        color: lightBeige,
         shape: BoxShape.circle,
-        border: Border.all(color: Colors.white, width: 4), // إطار أبيض
+        border: Border.all(color: Colors.white, width: 4),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
@@ -125,16 +100,13 @@ class ProfileAvatar extends StatelessWidget {
       ),
       child: const Icon(
         Icons.person,
-        size: 60,
+        size: 120,
         color: darkTeal,
       ),
     );
   }
 }
 
-// ------------------------------------------------------------------
-// بطاقة المحتوى الرئيسية
-// ------------------------------------------------------------------
 class ProfileCard extends StatelessWidget {
   const ProfileCard({super.key});
 
@@ -146,7 +118,7 @@ class ProfileCard extends StatelessWidget {
       constraints: const BoxConstraints(maxWidth: 400),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(30.0), // حواف مدورة
+        borderRadius: BorderRadius.circular(30.0),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -158,11 +130,11 @@ class ProfileCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // عنوان و Logo صغير
+        
           const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SizedBox(width: 40), // لترك مسافة للـ Avatar
+              SizedBox(width: 40),
               Text(
                 'Iman Ghabash',
                 style: TextStyle(
@@ -170,13 +142,13 @@ class ProfileCard extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     color: darkTeal),
               ),
-              // Logo/Icon صغير للمالك/الدور
+             
               Icon(Icons.apartment, color: mediumTeal),
             ],
           ),
           const SizedBox(height: 15),
 
-          // معلومات الاتصال
+        
           const ContactInfoRow(
             icon: Icons.phone,
             text: '+963 998865316',
@@ -192,31 +164,30 @@ class ProfileCard extends StatelessWidget {
           ),
           const Divider(height: 30, color: lightAqua),
 
-          // أزرار الإجراءات (My Docs, My Bookings)
           const Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               ActionButton(
                 icon: Icons.description,
-                label: 'myDocs',
+                label: 'My Docs',
                 color: mediumTeal,
               ),
               ActionButton(
                 icon: Icons.calendar_month,
-                label: 'my Bookings',
+                label: 'My Bookings',
                 color: mediumTeal,
               ),
             ],
           ),
           const SizedBox(height: 40),
 
-          // زر تسجيل الخروج
+      
           SizedBox(
             width: double.infinity,
             height: 55,
             child: ElevatedButton(
               onPressed: () {
-                // منطق تسجيل الخروج
+               
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: darkTeal,
@@ -272,7 +243,7 @@ class ContactInfoRow extends StatelessWidget {
         if (isVerified)
           const Icon(
             Icons.check_circle,
-            color: mediumTeal, // استخدام لون الـ Teal للتحقق
+            color: mediumTeal,
             size: 20,
           ),
       ],
@@ -280,9 +251,7 @@ class ContactInfoRow extends StatelessWidget {
   }
 }
 
-// ------------------------------------------------------------------
-// مكون زر الإجراءات (My Docs / My Bookings)
-// ------------------------------------------------------------------
+
 class ActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -302,11 +271,11 @@ class ActionButton extends StatelessWidget {
         // منطق النقر على الزر
       },
       child: Container(
-        width: 120, // لتحديد حجم مناسب
+        width: 120,
         height: 120,
         decoration: BoxDecoration(
-          color: color.withOpacity(0.8), // لون الخلفية للزر
-          borderRadius: BorderRadius.circular(20.0), // حواف مدورة
+          color: color.withOpacity(0.8),
+          borderRadius: BorderRadius.circular(20.0),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
