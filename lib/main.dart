@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task/view/docs_view.dart';
 import 'package:task/view/profile_view.dart';
 
 
@@ -19,7 +20,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         scaffoldBackgroundColor: Colors.grey[200],
       ),
-      home: const ProfileScreen(),
+      home:  ProfileScreen(),
+      // home:  DocsView(),
     );
   }
 }
