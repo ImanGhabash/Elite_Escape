@@ -34,6 +34,7 @@ class AuthService {
   Future<LoginResponse> login({
     required String mobileNumber,
     required String password,
+    // required String role,
   }) async {
     final response = await _dio.post(
       '/login',

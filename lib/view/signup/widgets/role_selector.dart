@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 
-enum UserRole { owner, tenant }
+import 'package:task/controllers/auth_controller.dart'; // يحتوي على UserRole
 
 class RoleSelector extends StatelessWidget {
   final UserRole? selectedRole;
