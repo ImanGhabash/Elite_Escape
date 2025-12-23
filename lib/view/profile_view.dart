@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
-
-
+import 'package:task/view/docs_view.dart';
 
 const Color darkTeal = Color(0xFF285260);
 const Color mediumTeal = Color(0xFF5A9C92);
@@ -14,11 +12,9 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // استخدام Stack لوضع بطاقة المحتوى فوق الخلفية المتدرجة
     return Scaffold(
       body: Stack(
         children: [
-          // 1. الخلفية المتدرجة (Gradient Background)
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -30,23 +26,21 @@ class ProfileScreen extends StatelessWidget {
                   lightAqua,
                   // lightBeige,
                   tanBrown,
-                  
                 ],
                 stops: [0.0, 0.35, 0.65, 1.0],
               ),
             ),
           ),
 
-
           Positioned(
-            top:-60,
+            top: -60,
             left: 0,
             right: 0,
             child: Center(
               child: Opacity(
-                opacity: 0.2, // لتخفيف ظهور الشعار كخلفية
+                opacity: 0.2,
                 child: Image.asset(
-                  'assets/images/logo_buildings.png', // يُفترض أنك وضعت صورة الشعار (المباني فقط) في مجلد assets
+                  'assets/images/logo_buildings.png',
                   height: 500,
                   fit: BoxFit.cover,
                 ),
@@ -54,10 +48,9 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
 
-     
           const Center(
             child: SingleChildScrollView(
-              padding: EdgeInsets.only(top: 150), // مسافة من الأعلى لـ Avatar
+              padding: EdgeInsets.only(top: 150),
               child: ProfileCard(),
             ),
           ),
@@ -66,16 +59,13 @@ class ProfileScreen extends StatelessWidget {
             top: 100,
             left: 0,
             right: 0,
-            child: Center(
-              child: ProfileAvatar(),
-            ),
+            child: Center(child: ProfileAvatar()),
           ),
         ],
       ),
     );
   }
 }
-
 
 class ProfileAvatar extends StatelessWidget {
   const ProfileAvatar({super.key});
@@ -98,11 +88,7 @@ class ProfileAvatar extends StatelessWidget {
           ),
         ],
       ),
-      child: const Icon(
-        Icons.person,
-        size: 120,
-        color: darkTeal,
-      ),
+      child: const Icon(Icons.person, size: 120, color: darkTeal),
     );
   }
 }
@@ -130,7 +116,6 @@ class ProfileCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-        
           const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -138,17 +123,17 @@ class ProfileCard extends StatelessWidget {
               Text(
                 'Iman Ghabash',
                 style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: darkTeal),
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: darkTeal,
+                ),
               ),
-             
+
               Icon(Icons.apartment, color: mediumTeal),
             ],
           ),
           const SizedBox(height: 15),
 
-        
           const ContactInfoRow(
             icon: Icons.phone,
             text: '+963 998865316',
@@ -164,31 +149,40 @@ class ProfileCard extends StatelessWidget {
           ),
           const Divider(height: 30, color: lightAqua),
 
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               ActionButton(
                 icon: Icons.description,
                 label: 'My Docs',
                 color: mediumTeal,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                     MaterialPageRoute(builder: (context) => const DocsView()),
+                  );
+                },
               ),
               ActionButton(
                 icon: Icons.calendar_month,
                 label: 'My Bookings',
                 color: mediumTeal,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                      MaterialPageRoute(builder: (context) => const DocsView()),
+                  );
+                },
               ),
             ],
           ),
           const SizedBox(height: 40),
 
-      
           SizedBox(
             width: double.infinity,
             height: 55,
             child: ElevatedButton(
-              onPressed: () {
-               
-              },
+              onPressed: () {},
               style: ElevatedButton.styleFrom(
                 backgroundColor: darkTeal,
                 shape: RoundedRectangleBorder(
@@ -199,9 +193,10 @@ class ProfileCard extends StatelessWidget {
               child: const Text(
                 'Logout',
                 style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
@@ -211,9 +206,6 @@ class ProfileCard extends StatelessWidget {
   }
 }
 
-// ------------------------------------------------------------------
-// مكون صف معلومات الاتصال
-// ------------------------------------------------------------------
 class ContactInfoRow extends StatelessWidget {
   final IconData icon;
   final String text;
@@ -235,41 +227,33 @@ class ContactInfoRow extends StatelessWidget {
         Icon(icon, color: mediumTeal, size: 28),
         const SizedBox(width: 15),
         Expanded(
-          child: Text(
-            text,
-            style: TextStyle(fontSize: 18, color: color),
-          ),
+          child: Text(text, style: TextStyle(fontSize: 18, color: color)),
         ),
         if (isVerified)
-          const Icon(
-            Icons.check_circle,
-            color: mediumTeal,
-            size: 20,
-          ),
+          const Icon(Icons.check_circle, color: mediumTeal, size: 20),
       ],
     );
   }
 }
 
-
 class ActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
   final Color color;
+  final VoidCallback onTap;
 
   const ActionButton({
     required this.icon,
     required this.label,
     required this.color,
+    required this.onTap,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        // منطق النقر على الزر
-      },
+      onTap: onTap,
       child: Container(
         width: 120,
         height: 120,
@@ -293,7 +277,9 @@ class ActionButton extends StatelessWidget {
             Text(
               label,
               style: const TextStyle(
-                  color: Colors.white, fontWeight: FontWeight.w600),
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),
