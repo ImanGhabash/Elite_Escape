@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task/view/Home/home_screen.dart';
 import 'package:task/view/cart_screen.dart';
 import 'package:task/view/favourite.dart';
@@ -10,7 +11,11 @@ import 'package:task/view/profile_view.dart';
 import 'package:task/view/welcome/welcome_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -25,10 +30,10 @@ class MyApp extends StatelessWidget {
         // textTheme: GoogleFonts.mulishTextTheme(),
       ),
       // home: BottomNavBar(),
-        // home: WelcomeScreen(),
-        home: const Scaffold(
-  body: Center(child: CircularProgressIndicator()),
-),
+        home: WelcomeScreen(),
+//         home: const Scaffold(
+//   // body: Center(child: CircularProgressIndicator()),
+// ),
 
     );
   }

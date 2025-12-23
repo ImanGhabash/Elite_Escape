@@ -21,6 +21,7 @@ class _SignUpViewState extends State<SignUpView> {
   final _formKey = GlobalKey<FormState>();
 
   File? profileImage;
+  File? idImage;
   UserRole? selectedRole;
 
   final TextEditingController firstNameController = TextEditingController();
@@ -39,6 +40,42 @@ class _SignUpViewState extends State<SignUpView> {
     if (picked != null) {
       setState(() => profileImage = File(picked.path));
     }
+  }
+
+  Future<void> pickIdImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: source);
+    if (picked != null) {
+      setState(() => idImage = File(picked.path));
+    }
+  }
+
+  void _showImageSourceActionSheet(BuildContext context, Function(ImageSource) onPick) {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Gallery'),
+              onTap: () {
+                Navigator.of(context).pop();
+                onPick(ImageSource.gallery);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Camera'),
+              onTap: () {
+                Navigator.of(context).pop();
+                onPick(ImageSource.camera);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -88,7 +125,10 @@ class _SignUpViewState extends State<SignUpView> {
                   ),
                   const SizedBox(height: 27),
 
-                  PhoneField(controller: phoneController),
+                  PhoneField(
+                    controller: phoneController,
+                    hint: 'Please enter your number',
+                  ),
                   const SizedBox(height: 27),
 
                   BirthdayField(controller: dateController),
@@ -116,32 +156,76 @@ class _SignUpViewState extends State<SignUpView> {
                   ),
                   const SizedBox(height: 27),
 
-                  RoleSelector(
-                    selectedRole: selectedRole,
-                    onSelect: (role) =>
-                        setState(() => selectedRole = role),
+                  // صورة الهوية
+                  InkWell(
+                    onTap: () => _showImageSourceActionSheet(context, pickIdImage),
+                    child: Container(
+                      height: 200,
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 10.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white38,
+                        border: Border.all(color: Color(0xFF285260), width: 3.5),
+                        borderRadius: BorderRadius.circular(40),
+                      ),
+                      child: idImage == null
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Add identity photo',
+                                  style: TextStyle(color: Colors.grey[700], fontSize: 16.0),
+                                ),
+                                const Icon(
+                                  Icons.add_a_photo,
+                                  color: Color(0xFF285260),
+                                  size: 28,
+                                ),
+                              ],
+                            )
+                          : ClipRRect(
+                              borderRadius: BorderRadius.circular(35),
+                              child: Image.file(
+                                idImage!,
+                                width: double.infinity,
+                                height: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                    ),
                   ),
-
                   const SizedBox(height: 20),
 
+                  // اختيار الدور
+                  RoleSelector(
+                    selectedRole: selectedRole,
+                    onSelect: (role) => setState(() => selectedRole = role),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // زر التسجيل
                   SignUpButton(
                     onPressed: () {
                       if (profileImage == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('please choise personal photo')),
+                          const SnackBar(content: Text('Please choose personal photo')),
+                        );
+                        return;
+                      }
+                      if (idImage == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Please choose identity photo')),
                         );
                         return;
                       }
                       if (selectedRole == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('please choise role')),
+                          const SnackBar(content: Text('Please choose role')),
                         );
                         return;
                       }
                       if (_formKey.currentState!.validate()) {
-                        // submit
+                        // تنفيذ عملية التسجيل هنا
                       }
                     },
                   ),

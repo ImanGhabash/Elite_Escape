@@ -6,41 +6,62 @@ import '../signup/signup_screen.dart';
 class WelcomeView extends StatelessWidget {
   const WelcomeView({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            AppColors.darkTeal,
-            AppColors.mediumTeal,
-            AppColors.lightAqua,
-            AppColors.tanBrown,
-          ],
-        ),
-      ),
-      child: Column(
-        children: [
-          const SizedBox(height: 70),
-          Image.asset('images/etile.png'),
-          const SizedBox(height: 60),
-          _actionButton(
-            context,
-            title: 'Log In',
-            page: const LoginScreen(),
-          ),
-          const SizedBox(height: 60),
-          _actionButton(
-            context,
-            title: 'Sign Up',
-            page: const SignUpScreen(),
-          ),
+@override
+Widget build(BuildContext context) {
+  return Container(
+    decoration: const BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          AppColors.darkTeal,
+          AppColors.mediumTeal,
+          AppColors.lightAqua,
+          AppColors.tanBrown,
         ],
       ),
-    );
-  }
+    ),
+    child: Stack(
+      children: [
+        Positioned(
+          top: 60,
+          left: 0,
+          right: 0,
+          child: Center(
+            child: Opacity(
+              opacity: 0.2,
+              child: Image.asset(
+                'images/logo_buildings.png',
+                height: 500,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ),
+
+        Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _actionButton(
+                context,
+                title: 'Log In',
+                page: const LoginScreen(),
+              ),
+              const SizedBox(height: 60),
+              _actionButton(
+                context,
+                title: 'Sign Up',
+                page: const SignUpScreen(),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 
   Widget _actionButton(BuildContext context,
       {required String title, required Widget page}) {
