@@ -7,7 +7,6 @@ import 'package:task/view/login/widgets/phone_field.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../controllers/auth_controller.dart';
 
-
 class LoginView extends ConsumerStatefulWidget {
   const LoginView({super.key});
 
@@ -24,12 +23,14 @@ class _LoginViewState extends ConsumerState<LoginView> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
 
-    ref.listen<AuthState>(authControllerProvider, (prev, next) {
-      if (next is AuthError) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(next.message)));
-      }
-    });
+   ref.listen<AuthState>(authControllerProvider, (prev, next) {
+  if (next is AuthError) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(next.message)));
+  } else if (next is AuthSuccess) {
+    Navigator.pushReplacementNamed(context, '/home');
+  }
+});
 
     return Scaffold(
       backgroundColor: AppColors.darkTeal,
@@ -73,10 +74,12 @@ class _LoginViewState extends ConsumerState<LoginView> {
                     );
                     return;
                   }
-                  // ref.read(authControllerProvider.notifier).login(
-                  //       // mobile: mobileController.text.trim(),
-                  //       // password: passwordController.text.trim(),
-                  //     );
+                  ref
+                      .read(authControllerProvider.notifier)
+                      .login(
+                        mobile: mobileController.text.trim(),
+                        password: passwordController.text.trim(),
+                      );
                 },
               ),
             ],

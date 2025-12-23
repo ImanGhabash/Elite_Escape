@@ -25,6 +25,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+       routes: {
+    '/home': (context) => const BottomNavBar(),
+  },
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         // textTheme: GoogleFonts.mulishTextTheme(),
