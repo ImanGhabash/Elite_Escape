@@ -20,11 +20,11 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['id'],
-      firstName: json['first_name'],
-      lastName: json['last_name'],
-      mobileNumber: json['mobile_number'],
-      role: json['role'],
-      dateOfBirth: json['date_of_birth'],
+      firstName: json['first_name'] ?? '',
+      lastName: json['last_name'] ?? '',
+      mobileNumber: json['mobile_number'] ?? '',
+      role: json['role'] ?? '',
+      dateOfBirth: json['date_of_birth'] ?? '',
       isApproved: json['is_approved'] == 1,
     );
   }

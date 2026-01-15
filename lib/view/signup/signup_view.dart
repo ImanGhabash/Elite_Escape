@@ -79,10 +79,15 @@ class _SignUpViewState extends ConsumerState<SignUpView> {
       if (next is AuthError) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(next.message)));
-      } else if (next is AuthRegistered) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Registration successful!')),
-        );
+      }else if (next is AuthRegistered) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text(
+        'تم إنشاء الحساب. ننتظر موافقة الأدمن قبل تسجيل الدخول.',
+      ),
+    ),
+  );
+  Navigator.pop(context); // رجوع لصفحة login
 
         _clearForm();
       }

@@ -14,7 +14,9 @@ class CustomAppBar extends StatelessWidget {
               backgroundColor: Colors.white,
               padding: EdgeInsets.all(20)
           ),
-          onPressed: (){},
+          onPressed: (){
+              Scaffold.of(context).openDrawer();
+          },
           iconSize: 30,
           icon:Image.asset(
             "images/settings_2099064.png",

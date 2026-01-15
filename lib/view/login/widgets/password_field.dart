@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task/generated/l10n.dart';
 import '../../../core/theme/app_colors.dart';
 
 class PasswordField extends StatelessWidget {
@@ -29,7 +30,7 @@ class PasswordField extends StatelessWidget {
         obscureText: visible,
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: 'Enter your password',
+          hintText: S.of(context).passowrd,
           suffixIcon: IconButton(
             icon: Icon(
               visible ? Icons.visibility : Icons.visibility_off,

@@ -1,7 +1,8 @@
 
 import 'package:flutter/material.dart';
 class MySearchBar extends StatelessWidget {
-  const MySearchBar({super.key});
+  const MySearchBar({super.key,this.onFilterPressed});
+final VoidCallback? onFilterPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -33,13 +34,13 @@ class MySearchBar extends StatelessWidget {
             width: 1.5,
             color: Colors.grey,
           ),
-          IconButton(
-            onPressed: (){},
-            icon:const Icon(
-              Icons.tune,
-              color: Colors.grey,
-            ),
-          ),
+    IconButton(
+  onPressed: onFilterPressed,
+  icon: const Icon(
+    Icons.tune,
+    color: Colors.grey,
+  ),
+),
         ],
       ),
     );

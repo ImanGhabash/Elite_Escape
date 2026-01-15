@@ -1,66 +1,35 @@
-
 import 'package:flutter/material.dart';
-import 'package:task/models/product.dart';
-//import '../../models/category.dart';
-//import '../../models/product_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:task/controllers/apartment_controller.dart';
+import 'package:task/models/apartment_model.dart';
+import 'package:task/view/Home/Widget/Home_Drawer%20.dart';
+import 'package:task/view/Home/Widget/apartment_filter_sheet.dart';
+// import '../controllers/product_controller.dart';
+// import '../models/product.dart';
 import 'Widget/home_app_bar.dart';
 import 'Widget/image_slider.dart';
-import 'Widget/product_cart.dart';
+import 'Widget/product_card.dart';
 import 'Widget/search_bar.dart';
-class Category {
-  final String title;
-  final String image;
 
-
-  Category({
-    required this.title,
-    required this.image,
-  });
-}
-final List<Category> categories = [
-  Category(
-      title: "All",
-      image:"images/cute-english-house-illustration-retro-style-architecture-cottagecore-style-cozy-home-with-flower-and-chimney-png.png"
-  ),
-  Category(
-
-      title: "Apartment",
-      image: "images/download.jpg"
-  ),
-  Category(
-      title: "Villa",
-      image: "images/images.jpg"
-  ),
-  Category(
-      title: "Hotel room",
-      image: "images/img.png"
-  ),
-  Category(
-      title: "Cottage",
-      image:"images/cute-english-house-illustration-retro-style-architecture-cottagecore-style-cozy-home-with-flower-and-chimney-png.png"
-  ),
-
-
-];
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
-const Color darkTeal =Color(0xff285260);
-const Color mediumTeal =Color(0xff5A9C92);
-const Color lightAqua =Color(0xffB4D7D8);
-const Color lightBeige =Color(0xffE0CFBF);
-const Color tanBrown =Color(0xffAA8872);
 
-class _HomeScreenState extends State<HomeScreen> {
-  int currentSlider=0;
-  int selectedIndex=0;
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  int currentSlider = 0;
+  int selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
-    List<List<Product>> selectedCategories=[all,appartment,villa,hotelRoom,cottage];
-    return  Scaffold(
+    final productsAsync = ref.watch(productControllerProvider);
+
+    final categories = ["All", "Apartment", "Villa", "Hotel room"];
+
+    return Scaffold(
+        drawer: const HomeDrawer(), 
       backgroundColor: Colors.white,
       body: Container(
         decoration: const BoxDecoration(
@@ -68,135 +37,161 @@ class _HomeScreenState extends State<HomeScreen> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              darkTeal,
-              mediumTeal,
-              lightAqua,
-              // lightBeige,
-              tanBrown,
-
+              Color(0xff285260),
+              Color(0xff5A9C92),
+              Color(0xffB4D7D8),
+              Color(0xffAA8872),
             ],
             stops: [0.0, 0.37, 0.60, 1.0],
-          ),),
+          ),
+        ),
         child: SingleChildScrollView(
-
           child: Padding(
             padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 35),
-              const CustomAppBar(),
-              const SizedBox(height: 20),
-              const MySearchBar(),
-              const SizedBox(height: 20),
-              ImageSlider(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 35),
+                const CustomAppBar(),
+                const SizedBox(height: 20),
+   MySearchBar(
+  onFilterPressed: () async {
+    final result = await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => const ApartmentFilterSheet(),
+    );
+
+    if (result != null) {
+      ref.read(productControllerProvider.notifier)
+          .applyLocalFilter(result);
+    }
+  },
+),
+
+
+                const SizedBox(height: 20),
+                ImageSlider(
                   currentSlider: currentSlider,
                   onCharge: (value) {
                     setState(() {
-                currentSlider= value;
-                },
+                      currentSlider = value;
+                    });
+                  },
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  height: 130,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: categories.length,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedIndex = index;
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: selectedIndex == index
+                                ? Colors.blue[200]
+                                : Colors.transparent,
+                          ),
+                          child: Column(
+                            children: [
+                           Container(
+  height: 65,
+  width: 70,
+  decoration: BoxDecoration(
+    shape: BoxShape.circle,
+    color: selectedIndex == index ? Colors.blue[200] : Colors.grey[300],
+  ),
+  child: Center(
+    child: Icon(
+      index == 0
+          ? Icons.apps           // All
+          : index == 1
+              ? Icons.apartment   // Apartment
+              : index == 2
+                  ? Icons.villa   // Villa
+                  : Icons.hotel,  // Hotel room
+      size: 32,
+      color: Color(0xff285260),
+    ),
+  ),
+),
+
+                              const SizedBox(height: 5),
+                              Text(
+                                categories[index],
+                                style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Special For You",
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
+                    ),
+                    Text(
+                      "See All",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                          color: Colors.black54),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                productsAsync.when(
+                  data: (products) {
+                  
+     List<Product> filtered = selectedIndex == 0
+    ? products
+    : products
+        .where((p) => (p.title ?? "").toLowerCase() ==
+                     categories[selectedIndex].toLowerCase())
+        .toList();
+
+                    return GridView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.78,
+                        crossAxisSpacing: 20,
+                        mainAxisSpacing: 20,
+                      ),
+                      itemCount: filtered.length,
+                      itemBuilder: (context, index) {
+                        return ProductCard(product: filtered[index]);
+                      },
                     );
                   },
-              ),
-              const SizedBox(height: 20),
-            SizedBox(
-              height: 130,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: categories.length,
-                itemBuilder: (context,index){
-                  return GestureDetector(
-                    onTap: (){
-                      setState(() {
-                        selectedIndex=index;
-                      });
-
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: selectedIndex==index
-                            ?Colors.blue[200]
-                            :Colors.transparent,
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 65,
-                            width: 70,
-                            decoration: BoxDecoration(
-
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                image: AssetImage(categories[index].image),
-                                fit: BoxFit.cover,
-
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(height: 5,),
-                          Text(
-                            categories[index].title,
-                            style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-
-              ),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (e, st) => Center(child: Text('Error: $e')),
+                ),
+              ],
             ),
-               const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Special For You",
-                    style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  Text(
-                    "See All",
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 16,
-                        color: Colors.black54,
-                    ),
-                  ),
-                ],
-              ),
-              GridView.builder(
-                physics:const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  gridDelegate:  const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                    childAspectRatio: 0.78,
-                    crossAxisSpacing: 20,
-                    mainAxisSpacing: 20
-                  ),
-                itemCount: selectedCategories[selectedIndex].length,
-                itemBuilder: (context,index){
-                    return ProductCard(
-                      product:  selectedCategories[selectedIndex][index],
-                    );
-                },
-              )
-            ],
-          ),
           ),
         ),
       ),
     );
   }
 }
-
-
-
-

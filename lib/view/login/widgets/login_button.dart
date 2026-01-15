@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task/generated/l10n.dart';
 // import '../../../core/theme/app_colors.dart';
 
 class LoginButton extends StatelessWidget {
@@ -22,7 +23,7 @@ class LoginButton extends StatelessWidget {
       ),
       child: loading
           ? const CircularProgressIndicator(color: Colors.white)
-          : const Text('Log in',
+          :  Text(S.of(context).Login,
               style: TextStyle(fontSize: 18, color: Colors.white)),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task/generated/l10n.dart';
 import '../../../core/theme/app_colors.dart';
 
 class PhoneField extends StatelessWidget {
@@ -23,9 +24,9 @@ class PhoneField extends StatelessWidget {
       child: TextFormField(
         controller: controller,
         keyboardType: TextInputType.phone,
-        decoration: const InputDecoration(
+        decoration:  InputDecoration(
           border: InputBorder.none,
-          hintText: 'Enter your number',
+          hintText: S.of(context).number,
           prefixIcon: Icon(
             Icons.phone,
             color: AppColors.darkTeal,

@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:task/generated/l10n.dart';
+import 'package:task/main.dart';
+import 'package:task/services/dio_service.dart';
 import 'package:task/view/login/widgets/login_avatar.dart';
 import 'package:task/view/login/widgets/login_button.dart';
 import 'package:task/view/login/widgets/password_field.dart';
 import 'package:task/view/login/widgets/phone_field.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../controllers/auth_controller.dart';
+
+final tokenProvider = StateProvider<String?>((ref) => null);
 
 class LoginView extends ConsumerStatefulWidget {
   const LoginView({super.key});
@@ -21,16 +27,36 @@ class _LoginViewState extends ConsumerState<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authControllerProvider);
+   
+    ref.listen<AuthState>(authControllerProvider, (prev, next) async {
+      print('AUTH STATE CHANGED: $next');
 
-   ref.listen<AuthState>(authControllerProvider, (prev, next) {
-  if (next is AuthError) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(next.message)));
-  } else if (next is AuthSuccess) {
-    Navigator.pushReplacementNamed(context, '/home');
-  }
-});
+      if (next is AuthError) {
+        print('AUTH ERROR');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(next.message)),
+        );
+      }
+
+      if (next is AuthSuccess) {
+        print('AUTH SUCCESS');
+        final token = next.token;
+        print('TOKEN: $token');
+  DioService().setToken(token);
+        ref.read(tokenProvider.notifier).state = token;
+
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', token);
+        print('TOKEN SAVED');
+
+        if (!mounted) return;
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const BottomNavBar()),
+        );
+      }
+    });
+
+    final authState = ref.watch(authControllerProvider);
 
     return Scaffold(
       backgroundColor: AppColors.darkTeal,
@@ -67,16 +93,18 @@ class _LoginViewState extends ConsumerState<LoginView> {
               LoginButton(
                 loading: authState is AuthLoading,
                 onPressed: () {
+                  print('LOGIN BUTTON PRESSED');
+
                   if (mobileController.text.isEmpty ||
                       passwordController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Please fill all fields')),
+                       SnackBar(content: Text(S.of(context).fillField)),
                     );
                     return;
                   }
-                  ref
-                      .read(authControllerProvider.notifier)
-                      .login(
+
+                  print('CALLING LOGIN API');
+                  ref.read(authControllerProvider.notifier).login(
                         mobile: mobileController.text.trim(),
                         password: passwordController.text.trim(),
                       );

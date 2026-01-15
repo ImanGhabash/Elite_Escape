@@ -1,0 +1,20 @@
+{
+  "title": "Welcome",
+  "apartment": "apartments",
+  "Login": "Login",
+  "passowrd": " Enter your  password",
+  "number": "enter your number",
+  "fillField": "please fill all fields",
+  "phone_requierd": "Phone number is required",
+  "signup": "signup",
+  "change_language": "Change Language",
+  "home": "Home",
+  "settings": "Settings",
+  "night_mode": "Night Mode",
+  "Birthday_Date":"Birthday Date",
+  "Birthday_valid":"Please enter date of birth",
+  "Logout":"Logout"
+
+  
+
+}

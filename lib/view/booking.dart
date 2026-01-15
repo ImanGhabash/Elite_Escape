@@ -1,310 +1,258 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:task/controllers/booking_controller.dart';
+import 'package:task/controllers/booking_list_controller.dart';
+import 'package:task/models/apartment_model.dart';
 import 'package:task/models/booking_model.dart';
-// ignore: depend_on_referenced_packages
-// import 'package:intl/intl.dart';
-
-import '../main.dart';
-import 'cart_screen.dart';
+import 'package:task/view/cart_screen.dart';
 
 
-class Booking extends StatefulWidget {
-  //final String apartmentName;
 
-//  const Booking({super.key, required this.apartmentName});
+const Color darkTeal = Color(0xFF285260);
+const Color mediumTeal = Color(0xFF5A9C92);
+const Color lightAqua = Color(0xFFB4D7D8);
+const Color tanBrown = Color(0xFFAA8872);
+
+class BookingView extends ConsumerStatefulWidget {
+  final Product apartment;
+  final Booking? existingBooking;
+
+  const BookingView({
+    super.key,
+    required this.apartment,
+    this.existingBooking,
+  });
+
   @override
-  State<Booking> createState() => _BookingState();
+  ConsumerState<BookingView> createState() => _BookingViewState();
 }
-int pricePerNight = 500;
-int totalAmount = 0;
-int numberOfGuests = 1;
-const Color darkTeal = Color(0xff285260);
-const Color mediumTeal = Color(0xff5A9C92);
-const Color lightAqua = Color(0xffB4D7D8);
-const Color tanBrown = Color(0xffAA8872);
 
-class _BookingState extends State<Booking> {
-  TextEditingController guestcontroller = TextEditingController();
+class _BookingViewState extends ConsumerState<BookingView> {
   DateTime? startDate;
   DateTime? endDate;
-  int daysDifference = 0;
 
+  late int pricePerNight;
+  int totalDays = 0;
+  int totalAmount = 0;
 
-  Future<void> _selectStartDate(BuildContext context) async {
-    DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: startDate ?? DateTime.now(),
-        firstDate: DateTime.now(),
-        lastDate: DateTime(2100));
-    if (picked != null) {
-      setState(() {
-        startDate = picked;
+  @override
+  void initState() {
+    super.initState();
+    pricePerNight = widget.apartment.dailyPrice.toInt();
 
-        if (endDate != null && endDate!.isBefore(startDate!)) {
-          endDate = null;
-        }
-        _calculateDifference();
-      });
+    if (widget.existingBooking != null) {
+      startDate = widget.existingBooking!.startDate;
+      endDate = widget.existingBooking!.endDate;
+      calculateTotal();
+      _background();
     }
   }
-
-
-  Future<void> _selectEndDate(BuildContext context) async {
-
-    if (startDate == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("يرجى اختيار تاريخ الوصول أولاً"),
-          backgroundColor: Colors.redAccent,
+  Widget _background() {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [darkTeal, mediumTeal, lightAqua, tanBrown],
         ),
-      );
-      return;
-    }
-    DateTime initialDateForEnd = endDate ?? startDate!.add(const Duration(days: 1));
-
-    if (initialDateForEnd.isBefore(startDate!)) {
-      initialDateForEnd = startDate!.add(const Duration(days: 1));
-    }
-
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: initialDateForEnd,
-      firstDate: startDate!.add(const Duration(days: 1)),
-      lastDate: DateTime(2100),
+      ),
     );
-    if (picked != null && picked != endDate) {
-      setState(() {
-        endDate = picked;
-        _calculateDifference();
-      });
-    }
   }
-  void _calculateDifference() {
+
+  void calculateTotal() {
     if (startDate != null && endDate != null) {
-      setState(() {
-        daysDifference = endDate!.difference(startDate!).inDays;
-        if (daysDifference <= 0) daysDifference = 1;
-        totalAmount = daysDifference * pricePerNight;
-      });
+      totalDays = endDate!.difference(startDate!).inDays;
+      if (totalDays < 1) totalDays = 1;
+      totalAmount = totalDays * pricePerNight;
     }
-  }
-
-
-  String _formatDate(DateTime? date) {
-    if (date == null) return "select date";
-    return DateFormat("dd, MMM yyyy").format(date);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 15),
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [darkTeal, mediumTeal, lightAqua, tanBrown],
-            stops: [0.0, 0.37, 0.60, 1.0],
-          ),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 50),
-                child: GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 30),
-                ),
-              ),
-              SizedBox(height: 30),
-              Text(
-                  "Complete Your Booking.....",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1,
-                  )
-              ),
-              SizedBox(height: 20),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  height: 150,
-                  width: double.infinity,
-                  child: Image.asset(
-                    "images/3a5be22e09f1749553065fcb79dbf69b.jpg",
-                    fit: BoxFit.cover,
+    ref.listen<AsyncValue<Booking?>>(
+      bookingControllerProvider,
+      (previous, next) {
+        next.whenOrNull(
+          data: (booking) async {
+            if (booking != null) {
+              await ref.read(bookingListProvider.notifier).refresh();
+              if (!mounted) return;
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const CartScreen()),
+              );
+            }
+          },
+          error: (e, _) {
+            showDialog(
+              context: context,
+              builder: (_) => AlertDialog(
+                title: const Text('Booking Error'),
+                content: Text(e.toString()),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('OK'),
                   ),
-                ),
+                ],
               ),
-              SizedBox(height: 20),
-              Text("Select Date :", style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-              SizedBox(height: 10),
-
-
-              datePickerTile("Check-in Date", _formatDate(startDate), () => _selectStartDate(context)),
-              SizedBox(height: 15),
-
-
-              datePickerTile("Check-out Date", _formatDate(endDate), () => _selectEndDate(context)),
-              SizedBox(height: 15),
-              Container(
-                padding: EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.white.withOpacity(0.3)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Number of Guests",
-                        style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
-                    Row(
-                      children: [
-                        _buildCounterButton(Icons.remove, () {
-                          if (numberOfGuests > 1) setState(() => numberOfGuests--);
-                        }),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15),
-                          child: Text("$numberOfGuests",
-                              style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                        ),
-                        _buildCounterButton(Icons.add, () {
-                          setState(() => numberOfGuests++);
-                        }),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-
-              if (daysDifference > 0)
-                Container(
-                  margin: EdgeInsets.only(top: 20),
-                  padding: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  child: Column(
-                    children: [
-                      _priceRow("Price per night", "\$$pricePerNight"),
-                      _priceRow("Duration", "$daysDifference Nights"),
-                      Divider(height: 30, thickness: 1),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("Total Amount", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                          Text("\$$totalAmount",
-                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: darkTeal)),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              SizedBox(height: 120),
-
-              ElevatedButton(
-                onPressed: () {
-                  if (startDate != null && endDate != null) {
-
-                    final newBooking = BookingModel(
-                      //apartmentName: widget.apartmentName,
-                      startDate: startDate!,
-                      endDate: endDate!,
-                      numberOfGuests: numberOfGuests,
-                      totalPrice: totalAmount,
-                      days: daysDifference,
-                    );
-
-
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CartScreen(booking: newBooking),
-                      ),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("يرجى اختيار التواريخ أولاً")),
-                    );
-                  }
-                },style: ElevatedButton.styleFrom(
-
-                backgroundColor: Colors.green,
-
-                minimumSize: Size(double.infinity, 55),
-
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-
-              ),
-
-                child: Text("Book Now", style: TextStyle(fontSize: 20, color: Colors.white)),
-              ),
-              SizedBox(height: 90),
-            ],
-          ),
-        ),
-      ),
+            );
+          },
+        );
+      },
     );
-  }}
 
+    final bookingState = ref.watch(bookingControllerProvider);
 
-  Widget datePickerTile(String title, String dateText, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
-        width: double.infinity,
+    return Scaffold(
+      appBar: AppBar(title: const Text("Booking")),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: TextStyle(color: Colors.grey[700], fontSize: 14)),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.calendar_month, color: Colors.black),
-                SizedBox(width: 10),
-                Text(dateText, style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold)),
-              ],
+            Text(
+              widget.apartment.title ?? '',
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+
+            /// Start Date
+            ListTile(
+              title: Text(
+                startDate == null
+                    ? "Select start date"
+                    : DateFormat("yyyy-MM-dd").format(startDate!),
+              ),
+              trailing: const Icon(Icons.calendar_month),
+              onTap: () async {
+                final picked = await showDatePicker(
+                  context: context,
+                  firstDate: DateTime.now(),
+                  lastDate: DateTime.now().add(const Duration(days: 365)),
+                  initialDate: startDate ?? DateTime.now(),
+                );
+                if (picked != null) {
+                  setState(() {
+                    startDate = picked;
+                    calculateTotal();
+                  });
+                }
+              },
+            ),
+
+            /// End Date
+            ListTile(
+              title: Text(
+                endDate == null
+                    ? "Select end date"
+                    : DateFormat("yyyy-MM-dd").format(endDate!),
+              ),
+              trailing: const Icon(Icons.calendar_month),
+              onTap: () async {
+                final picked = await showDatePicker(
+                  context: context,
+                  firstDate: startDate ?? DateTime.now(),
+                  lastDate: DateTime.now().add(const Duration(days: 365)),
+                  initialDate: endDate ?? DateTime.now(),
+                );
+                if (picked != null) {
+                  setState(() {
+                    endDate = picked;
+                    calculateTotal();
+                  });
+                }
+              },
+            ),
+
+            const SizedBox(height: 20),
+
+            /// Price Info
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Price per night: \$${pricePerNight}"),
+                  const SizedBox(height: 8),
+                  Text("Days: $totalDays"),
+                  const SizedBox(height: 8),
+                  Text(
+                    "Total: \$${totalAmount}",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const Spacer(),
+
+            /// Book / Update Button
+            SizedBox(
+              width: double.infinity,
+              height: 55,
+              child: ElevatedButton(
+                onPressed: bookingState.isLoading
+                    ? null
+                    : () {
+                        if (startDate == null || endDate == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Please select dates first"),
+                            ),
+                          );
+                          return;
+                        }
+
+                        final controller =
+                            ref.read(bookingControllerProvider.notifier);
+
+   if (widget.existingBooking != null) {
+  controller.updateBooking(
+    bookingId: widget.existingBooking!.id,
+    startDate: startDate!,
+    endDate: endDate!,
+  );
+} else {
+  controller.createBooking(
+    apartmentId: widget.apartment.id,
+    startDate: startDate!,
+    endDate: endDate!,
+    totalPrice: totalAmount.toDouble(),
+  );
+}
+
+                      },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:darkTeal,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                child: bookingState.isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : Text(
+                        widget.existingBooking != null
+                            ? "Update Booking"
+                            : "Book Now",
+                        style: const TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
+                      ),
+              ),
             ),
           ],
         ),
       ),
     );
   }
-
-Widget _buildCounterButton(IconData icon, VoidCallback onTap) {
-  return GestureDetector(
-    onTap: onTap,
-    child: Container(
-      padding: EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        shape: BoxShape.circle,
-      ),
-      child: Icon(icon, color: darkTeal, size: 20),
-    ),
-  );
 }
-
-Widget _priceRow(String label, String value) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: TextStyle(color: Colors.grey[600], fontSize: 15)),
-        Text(
-            value, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-      ],
-    ),
-  );
-}
-
