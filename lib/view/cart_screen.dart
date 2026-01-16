@@ -3,9 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:task/controllers/booking_controller.dart';
 import 'package:task/controllers/booking_list_controller.dart';
-import 'package:task/models/booking_model.dart';
+import 'package:task/core/theme/gradient_scaffold.dart';
+import 'package:task/generated/l10n.dart';
+
 import 'package:task/view/booking.dart';
-// import 'package:task/services/booking_service.dart' as bookingService;
+
+const Color darkTeal = Color(0xFF285260);
+const Color mediumTeal = Color(0xFF5A9C92);
+const Color lightAqua = Color(0xFFB4D7D8);
+const Color tanBrown = Color(0xFFAA8872);
 
 class CartScreen extends ConsumerWidget {
   const CartScreen({super.key});
@@ -14,9 +20,9 @@ class CartScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final bookingsState = ref.watch(bookingListProvider);
 
-    return Scaffold(
+    return GradientScaffold(
       appBar: AppBar(
-        title: const Text("My Bookings"),
+        title: Text(S.of(context).my_bookings),
         backgroundColor: const Color(0xff285260),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -29,7 +35,7 @@ class CartScreen extends ConsumerWidget {
       ),
       body: bookingsState.when(
         data: (bookings) => bookings.isEmpty
-            ? const Center(child: Text("No bookings yet"))
+            ? Center(child: Text(S.of(context).no_bookings_yet))
             : ListView.builder(
                 padding: const EdgeInsets.all(16),
                 itemCount: bookings.length,
@@ -38,7 +44,8 @@ class CartScreen extends ConsumerWidget {
                   return Card(
                     margin: const EdgeInsets.only(bottom: 16),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
                     elevation: 5,
                     child: Padding(
                       padding: const EdgeInsets.all(15.0),
@@ -46,38 +53,48 @@ class CartScreen extends ConsumerWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           ListTile(
-                            leading: Icon(Icons.hotel,
-                                color: const Color(0xff285260), size: 40),
+                            leading: Icon(
+                              Icons.hotel,
+                              color: const Color(0xff285260),
+                              size: 40,
+                            ),
                             title: Text(
                               booking.product.title,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                           if (booking.status == "cancelled")
                             Padding(
                               padding: const EdgeInsets.only(top: 4),
                               child: Text(
-                                "Cancelled",
+                                S.of(context).cancelled,
                                 style: TextStyle(
-                                    color: Colors.red, fontWeight: FontWeight.bold),
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           const Divider(),
                           _infoRow(
-                              "Check-in",
-                              DateFormat("dd MMM").format(booking.startDate)),
+                            S.of(context).check_in,
+                            DateFormat("dd MMM").format(booking.startDate),
+                          ),
                           _infoRow(
-                              "Check-out",
-                              DateFormat("dd MMM").format(booking.endDate)),
-                          _infoRow("Total Price", "\$${booking.totalPrice}",
-                              isBold: true),
+                            S.of(context).check_out,
+                            DateFormat("dd MMM").format(booking.endDate),
+                          ),
+                          _infoRow(
+                            S.of(context).total,
+                            "\$${booking.totalPrice}",
+                            isBold: true,
+                          ),
                           const SizedBox(height: 10),
 
-                          // أزرار تعديل وإلغاء
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              // زر التعديل
                               TextButton.icon(
                                 onPressed: booking.status == "cancelled"
                                     ? null
@@ -92,13 +109,14 @@ class CartScreen extends ConsumerWidget {
                                           ),
                                         );
                                       },
-                                icon: const Icon(Icons.edit, color: Colors.blue),
-                                label: const Text("Edit",
-                                    style: TextStyle(color: Colors.blue)),
+                                icon: const Icon(Icons.edit, color: tanBrown),
+                                label: Text(
+                                  S.of(context).edit,
+                                  style: TextStyle(color: tanBrown),
+                                ),
                               ),
                               const SizedBox(width: 10),
 
-                              // زر الإلغاء
                               TextButton.icon(
                                 onPressed: booking.status == "cancelled"
                                     ? null
@@ -106,42 +124,82 @@ class CartScreen extends ConsumerWidget {
                                         final confirm = await showDialog<bool>(
                                           context: context,
                                           builder: (_) => AlertDialog(
-                                            title: const Text("Cancel Booking"),
-                                            content: const Text(
-                                                "Are you sure you want to cancel this booking?"),
+                                            title: Text(
+                                              S.of(context).cancel_booking,
+                                            ),
+                                            content: Text(
+                                              S
+                                                  .of(context)
+                                                  .confirm_cancel_booking,
+                                            ),
                                             actions: [
                                               TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(context, false),
-                                                  child: const Text("No")),
+                                                onPressed: () => Navigator.pop(
+                                                  context,
+                                                  false,
+                                                ),
+                                                child: Text(S.of(context).no),
+                                              ),
                                               TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(context, true),
-                                                  child: const Text("Yes")),
+                                                onPressed: () => Navigator.pop(
+                                                  context,
+                                                  true,
+                                                ),
+                                                child: Text(S.of(context).yes),
+                                              ),
                                             ],
                                           ),
                                         );
 
                                         if (confirm ?? false) {
                                           try {
-   await ref
-    .read(bookingControllerProvider.notifier)
-    .cancelBooking(booking.id);
+                                            await ref
+                                                .read(
+                                                  bookingControllerProvider
+                                                      .notifier,
+                                                )
+                                                .cancelBooking(booking.id);
 
-await ref.read(bookingListProvider.notifier).refresh();
+                                            await ref
+                                                .read(
+                                                  bookingListProvider.notifier,
+                                                )
+                                                .refresh();
 
-
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                                const SnackBar(
-                                                    content: Text("Booking cancelled")));
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  S
+                                                      .of(context)
+                                                      .booking_cancelled,
+                                                ),
+                                              ),
+                                            );
                                           } catch (e) {
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(content: Text("Failed to cancel: $e")));
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  S
+                                                      .of(context)
+                                                      .failed_to_cancel,
+                                                ),
+                                              ),
+                                            );
                                           }
                                         }
                                       },
-                                icon: const Icon(Icons.cancel, color: Colors.red),
-                                label: const Text("Cancel", style: TextStyle(color: Colors.red)),
+                                icon: const Icon(
+                                  Icons.cancel,
+                                  color: Colors.red,
+                                ),
+                                label: Text(
+                                  S.of(context).cancel,
+                                  style: TextStyle(color: Colors.red),
+                                ),
                               ),
                             ],
                           ),
@@ -164,10 +222,13 @@ await ref.read(bookingListProvider.notifier).refresh();
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label, style: TextStyle(color: Colors.grey[600])),
-          Text(value,
-              style: TextStyle(
-                  fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-                  fontSize: isBold ? 18 : 14)),
+          Text(
+            value,
+            style: TextStyle(
+              fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+              fontSize: isBold ? 18 : 14,
+            ),
+          ),
         ],
       ),
     );

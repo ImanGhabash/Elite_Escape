@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:task/controllers/booking_controller.dart';
 import 'package:task/controllers/booking_list_controller.dart';
+import 'package:task/core/theme/gradient_scaffold.dart';
+import 'package:task/generated/l10n.dart';
 import 'package:task/models/apartment_model.dart';
 import 'package:task/models/booking_model.dart';
 import 'package:task/view/cart_screen.dart';
@@ -45,26 +47,17 @@ class _BookingViewState extends ConsumerState<BookingView> {
       startDate = widget.existingBooking!.startDate;
       endDate = widget.existingBooking!.endDate;
       calculateTotal();
-      _background();
+     
     }
   }
-  Widget _background() {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [darkTeal, mediumTeal, lightAqua, tanBrown],
-        ),
-      ),
-    );
-  }
+
 
   void calculateTotal() {
     if (startDate != null && endDate != null) {
       totalDays = endDate!.difference(startDate!).inDays;
       if (totalDays < 1) totalDays = 1;
       totalAmount = totalDays * pricePerNight;
+
     }
   }
 
@@ -88,12 +81,12 @@ class _BookingViewState extends ConsumerState<BookingView> {
             showDialog(
               context: context,
               builder: (_) => AlertDialog(
-                title: const Text('Booking Error'),
+                title:  Text( S.of(context).booking_error),
                 content: Text(e.toString()),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('OK'),
+                    child:  Text( S.of(context).ok),
                   ),
                 ],
               ),
@@ -105,8 +98,8 @@ class _BookingViewState extends ConsumerState<BookingView> {
 
     final bookingState = ref.watch(bookingControllerProvider);
 
-    return Scaffold(
-      appBar: AppBar(title: const Text("Booking")),
+    return GradientScaffold(
+      appBar: AppBar(title:  Text( S.of(context).booking, ),backgroundColor: darkTeal,),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -122,7 +115,7 @@ class _BookingViewState extends ConsumerState<BookingView> {
             ListTile(
               title: Text(
                 startDate == null
-                    ? "Select start date"
+                    ?  S.of(context).select_start_date
                     : DateFormat("yyyy-MM-dd").format(startDate!),
               ),
               trailing: const Icon(Icons.calendar_month),
@@ -146,7 +139,7 @@ class _BookingViewState extends ConsumerState<BookingView> {
             ListTile(
               title: Text(
                 endDate == null
-                    ? "Select end date"
+                    ?  S.of(context).select_end_date
                     : DateFormat("yyyy-MM-dd").format(endDate!),
               ),
               trailing: const Icon(Icons.calendar_month),
@@ -170,12 +163,14 @@ class _BookingViewState extends ConsumerState<BookingView> {
 
             /// Price Info
             Container(
+              
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
+                
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Price per night: \$${pricePerNight}"),
@@ -205,8 +200,8 @@ class _BookingViewState extends ConsumerState<BookingView> {
                     : () {
                         if (startDate == null || endDate == null) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Please select dates first"),
+                             SnackBar(
+                              content: Text(S.of(context).select_dates_first),
                             ),
                           );
                           return;
@@ -241,8 +236,8 @@ class _BookingViewState extends ConsumerState<BookingView> {
                     ? const CircularProgressIndicator(color: Colors.white)
                     : Text(
                         widget.existingBooking != null
-                            ? "Update Booking"
-                            : "Book Now",
+                            ? S.of(context).update_booking
+                            : S.of(context).book_now,
                         style: const TextStyle(
                           fontSize: 18,
                           color: Colors.white,

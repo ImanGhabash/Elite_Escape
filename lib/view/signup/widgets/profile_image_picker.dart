@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:task/generated/l10n.dart';
 import '../../../core/theme/app_colors.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -20,7 +21,7 @@ class ProfileImagePicker extends StatelessWidget {
         children: [
           ListTile(
             leading: const Icon(Icons.photo_library),
-            title: const Text('Gallery'),
+            title:  Text( S.of(context).gallery),
             onTap: () {
               onPick(ImageSource.gallery);
               Navigator.pop(context);
@@ -28,7 +29,7 @@ class ProfileImagePicker extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.camera_alt),
-            title: const Text('Camera'),
+            title:  Text( S.of(context).camera),
             onTap: () {
               onPick(ImageSource.camera);
               Navigator.pop(context);

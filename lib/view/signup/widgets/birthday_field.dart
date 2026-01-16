@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:task/generated/l10n.dart';
 import '../../../core/theme/app_colors.dart';
 
 class BirthdayField extends StatelessWidget {
@@ -31,15 +32,15 @@ class BirthdayField extends StatelessWidget {
         controller: controller,
         readOnly: true,
         onTap: () => _pickDate(context),
-        decoration: const InputDecoration(
+        decoration:  InputDecoration(
           border: InputBorder.none,
-          hintText: 'Birthday Date',
+          hintText: S.of(context).birthday_date,
           prefixIcon:
               Icon(Icons.calendar_today, color: AppColors.darkTeal),
         ),
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return 'Please enter date of birth';
+            return  S.of(context).please_birth;
           }
           return null;
         },

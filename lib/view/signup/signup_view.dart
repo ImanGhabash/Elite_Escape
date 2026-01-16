@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:task/controllers/auth_controller.dart'; // فيه UserRole و authControllerProvider
+import 'package:task/generated/l10n.dart';
 import '../../core/theme/app_colors.dart';
 import 'widgets/profile_image_picker.dart';
 import 'widgets/text_input_field.dart';
@@ -53,7 +54,7 @@ class _SignUpViewState extends ConsumerState<SignUpView> {
           children: [
             ListTile(
               leading: const Icon(Icons.photo_library),
-              title: const Text('Gallery'),
+              title:  Text( S.of(context).gallery),
               onTap: () {
                 Navigator.of(context).pop();
                 onPick(ImageSource.gallery);
@@ -61,7 +62,7 @@ class _SignUpViewState extends ConsumerState<SignUpView> {
             ),
             ListTile(
               leading: const Icon(Icons.camera_alt),
-              title: const Text('Camera'),
+              title:  Text( S.of(context).camera),
               onTap: () {
                 Navigator.of(context).pop();
                 onPick(ImageSource.camera);
@@ -81,10 +82,9 @@ class _SignUpViewState extends ConsumerState<SignUpView> {
             .showSnackBar(SnackBar(content: Text(next.message)));
       }else if (next is AuthRegistered) {
   ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(
+   SnackBar(
       content: Text(
-        'تم إنشاء الحساب. ننتظر موافقة الأدمن قبل تسجيل الدخول.',
-      ),
+         S.of(context).account_created_waiting_for_admin)
     ),
   );
   Navigator.pop(context); // رجوع لصفحة login
@@ -97,7 +97,7 @@ class _SignUpViewState extends ConsumerState<SignUpView> {
       appBar: AppBar(
         backgroundColor: const Color(0XFF254f5b),
         iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text('Sign Up'),
+        title: Text( S.of(context).signup),
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -121,34 +121,34 @@ class _SignUpViewState extends ConsumerState<SignUpView> {
                 ProfileImagePicker(image: profileImage, onPick: pickImage),
                 const SizedBox(height: 20),
                 TextInputField(
-                  hint: 'First Name',
+                  hint:  S.of(context).first_name,
                   controller: firstNameController,
-                  validatorText: 'Please enter first name',
+                  validatorText:  S.of(context).please_first,
                 ),
                 const SizedBox(height: 20),
                 TextInputField(
-                  hint: 'Last Name',
+                  hint:  S.of(context).last_name,
                   controller: lastNameController,
-                  validatorText: 'Please enter last name',
+                  validatorText:  S.of(context).please_last,
                 ),
                 const SizedBox(height: 20),
-                PhoneField(controller: phoneController, hint: 'Enter your number'),
+                PhoneField(controller: phoneController, hint:  S.of(context).enter_phone),
                 const SizedBox(height: 20),
                 BirthdayField(controller: dateController),
                 const SizedBox(height: 20),
                 PasswordField(
                   controller: passwordController,
                   visible: passwordVisible,
-                  hint: 'Enter password',
+                  hint:  S.of(context).password,
                   onToggle: () => setState(() => passwordVisible = !passwordVisible),
                 ),
                 const SizedBox(height: 20),
                 PasswordField(
                   controller: confirmPasswordController,
                   visible: passwordVisible,
-                  hint: 'Confirm password',
+                  hint:  S.of(context).confirm_password,
                   validator: (value) {
-                    if (value != passwordController.text) return 'Passwords do not match';
+                    if (value != passwordController.text) return  S.of(context).passwords_match;
                     return null;
                   },
                 ),
@@ -185,7 +185,7 @@ class _SignUpViewState extends ConsumerState<SignUpView> {
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Add identity photo', style: TextStyle(color: Colors.grey[700], fontSize: 16)),
+                  Text( S.of(context).add_identity, style: TextStyle(color: Colors.grey[700], fontSize: 16)),
                   const Icon(Icons.add_a_photo, color: Color(0xFF285260), size: 28),
                 ],
               )
@@ -199,15 +199,15 @@ class _SignUpViewState extends ConsumerState<SignUpView> {
 
   void _submit() {
     if (profileImage == null) {
-      _showSnack('Please choose personal photo');
+      _showSnack( S.of(context).please_personal_photo);
       return;
     }
     if (idImage == null) {
-      _showSnack('Please choose identity photo');
+      _showSnack( S.of(context).please_identity_photo);
       return;
     }
     if (selectedRole == null) {
-      _showSnack('Please choose role');
+      _showSnack( S.of(context).please_role);
       return;
     }
     if (_formKey.currentState!.validate()) {

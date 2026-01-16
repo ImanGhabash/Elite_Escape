@@ -97,15 +97,18 @@ class _BottomNavBarState extends State<BottomNavBar> {
       bottomNavigationBar: BottomAppBar(
         height: 60,
         shape: const CircularNotchedRectangle(),
-        notchMargin: 10,
+        notchMargin: 20,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _navIcon(0, Icons.grid_view_outlined),
+            // SizedBox(width:0),
             _navIcon(1, Icons.favorite_border),
-            const SizedBox(width: 40),
+             SizedBox(width:40),
             _navIcon(3, Icons.shopping_cart_outlined),
             _navIcon(4, Icons.person),
+                        //  SizedBox(width:0),
+
           ],
         ),
       ),
@@ -133,12 +136,13 @@ class _BottomNavBarState extends State<BottomNavBar> {
   // ================= SCREENS =================
   List<Widget> _screens() {
     return [
+
       const Scaffold(),
       const FavoritesScreen(),
       const HomeScreen(),
       CartScreen(),
-
-      // PROFILE WITH TOKEN
+ const Scaffold(),
+   
     
       
     ];

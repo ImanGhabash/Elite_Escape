@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task/generated/l10n.dart';
 import '../../core/theme/app_colors.dart';
 import '../login/login_screen.dart';
 import '../signup/signup_screen.dart';
@@ -45,13 +46,13 @@ Widget build(BuildContext context) {
             children: [
               _actionButton(
                 context,
-                title: 'Log In',
+                title: S.of(context).login,
                 page: const LoginScreen(),
               ),
               const SizedBox(height: 60),
               _actionButton(
                 context,
-                title: 'Sign Up',
+                title: S.of(context).signup,
                 page: const SignUpScreen(),
               ),
             ],

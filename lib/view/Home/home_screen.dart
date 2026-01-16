@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task/controllers/apartment_controller.dart';
+import 'package:task/generated/l10n.dart';
 import 'package:task/models/apartment_model.dart';
 import 'package:task/view/Home/Widget/Home_Drawer%20.dart';
 import 'package:task/view/Home/Widget/apartment_filter_sheet.dart';
@@ -26,10 +27,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final productsAsync = ref.watch(productControllerProvider);
 
-    final categories = ["All", "Apartment", "Villa", "Hotel room"];
+    final categories = [
+      S.of(context).all,
+      S.of(context).apartment,
+      S.of(context).villa,
+      S.of(context).hotel_room,
+    ];
 
     return Scaffold(
-        drawer: const HomeDrawer(), 
+      drawer: const HomeDrawer(),
       backgroundColor: Colors.white,
       body: Container(
         decoration: const BoxDecoration(
@@ -54,7 +60,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 const SizedBox(height: 35),
                 const CustomAppBar(),
                 const SizedBox(height: 20),
-   MySearchBar(
+           MySearchBar(
+  onSearch: (query) {
+    ref
+        .read(productControllerProvider.notifier)
+        .search(query);
+  },
   onFilterPressed: () async {
     final result = await showModalBottomSheet(
       context: context,
@@ -63,12 +74,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
 
     if (result != null) {
-      ref.read(productControllerProvider.notifier)
+      ref
+          .read(productControllerProvider.notifier)
           .applyLocalFilter(result);
     }
   },
 ),
-
 
                 const SizedBox(height: 20),
                 ImageSlider(
@@ -102,34 +113,40 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ),
                           child: Column(
                             children: [
-                           Container(
-  height: 65,
-  width: 70,
-  decoration: BoxDecoration(
-    shape: BoxShape.circle,
-    color: selectedIndex == index ? Colors.blue[200] : Colors.grey[300],
-  ),
-  child: Center(
-    child: Icon(
-      index == 0
-          ? Icons.apps           // All
-          : index == 1
-              ? Icons.apartment   // Apartment
-              : index == 2
-                  ? Icons.villa   // Villa
-                  : Icons.hotel,  // Hotel room
-      size: 32,
-      color: Color(0xff285260),
-    ),
-  ),
-),
+                              Container(
+                                height: 65,
+                                width: 70,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: selectedIndex == index
+                                      ? Colors.blue[200]
+                                      : Colors.grey[300],
+                                ),
+                                child: Center(
+                                  child: Icon(
+                                    index == 0
+                                        ? Icons
+                                              .apps // All
+                                        : index == 1
+                                        ? Icons
+                                              .apartment // Apartment
+                                        : index == 2
+                                        ? Icons
+                                              .villa // Villa
+                                        : Icons.hotel, // Hotel room
+                                    size: 32,
+                                    color: Color(0xff285260),
+                                  ),
+                                ),
+                              ),
 
                               const SizedBox(height: 5),
                               Text(
                                 categories[index],
                                 style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ],
                           ),
@@ -139,44 +156,49 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Special For You",
-                      style:
-                          TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
+                      S.of(context).special_for_you,
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                     Text(
-                      "See All",
+                      S.of(context).see_all,
                       style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                          color: Colors.black54),
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                        color: Colors.black54,
+                      ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 20),
                 productsAsync.when(
                   data: (products) {
-                  
-     List<Product> filtered = selectedIndex == 0
-    ? products
-    : products
-        .where((p) => (p.title ?? "").toLowerCase() ==
-                     categories[selectedIndex].toLowerCase())
-        .toList();
+                    List<Product> filtered = selectedIndex == 0
+                        ? products
+                        : products
+                              .where(
+                                (p) =>
+                                    (p.title ?? "").toLowerCase() ==
+                                    categories[selectedIndex].toLowerCase(),
+                              )
+                              .toList();
 
                     return GridView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 0.78,
-                        crossAxisSpacing: 20,
-                        mainAxisSpacing: 20,
-                      ),
+                            crossAxisCount: 2,
+                            childAspectRatio: 0.78,
+                            crossAxisSpacing: 20,
+                            mainAxisSpacing: 20,
+                          ),
                       itemCount: filtered.length,
                       itemBuilder: (context, index) {
                         return ProductCard(product: filtered[index]);

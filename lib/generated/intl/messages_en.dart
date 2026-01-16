@@ -22,24 +22,128 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-    "Birthday_Date": MessageLookupByLibrary.simpleMessage("Birthday Date"),
-    "Birthday_valid": MessageLookupByLibrary.simpleMessage(
-      "Please enter date of birth",
+    "Rate_this_Apartment": MessageLookupByLibrary.simpleMessage(
+      "Rate this Apartment",
     ),
-    "Login": MessageLookupByLibrary.simpleMessage("Login"),
-    "Logout": MessageLookupByLibrary.simpleMessage("Logout"),
-    "apartment": MessageLookupByLibrary.simpleMessage("apartments"),
+    "account_created_waiting_for_admin": MessageLookupByLibrary.simpleMessage(
+      "Account created, waiting for admin approval",
+    ),
+    "add_identity": MessageLookupByLibrary.simpleMessage("Add identity photo"),
+    "all": MessageLookupByLibrary.simpleMessage("All"),
+    "apartment": MessageLookupByLibrary.simpleMessage("Apartment"),
+    "apartment_type": MessageLookupByLibrary.simpleMessage("Apartment"),
+    "apply": MessageLookupByLibrary.simpleMessage("Apply"),
+    "birthday_date": MessageLookupByLibrary.simpleMessage("Birthday Date"),
+    "book_now": MessageLookupByLibrary.simpleMessage("Book Now"),
+    "booking": MessageLookupByLibrary.simpleMessage("Booking"),
+    "booking_cancelled": MessageLookupByLibrary.simpleMessage(
+      "Booking cancelled",
+    ),
+    "booking_error": MessageLookupByLibrary.simpleMessage("Booking Error"),
+    "camera": MessageLookupByLibrary.simpleMessage("Camera"),
+    "cancel": MessageLookupByLibrary.simpleMessage("cancel"),
+    "cancel_booking": MessageLookupByLibrary.simpleMessage("Cancel Booking"),
+    "cancelled": MessageLookupByLibrary.simpleMessage("Cancelled"),
     "change_language": MessageLookupByLibrary.simpleMessage("Change Language"),
-    "fillField": MessageLookupByLibrary.simpleMessage("please fill all fields"),
+    "check_in": MessageLookupByLibrary.simpleMessage("Check-in"),
+    "check_out": MessageLookupByLibrary.simpleMessage("Check-out"),
+    "city": MessageLookupByLibrary.simpleMessage("City"),
+    "confirm_cancel_booking": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to cancel this booking?",
+    ),
+    "confirm_password": MessageLookupByLibrary.simpleMessage(
+      "Confirm Password",
+    ),
+    "cottage": MessageLookupByLibrary.simpleMessage("Cottage"),
+    "damascus": MessageLookupByLibrary.simpleMessage("Damascus"),
+    "days": MessageLookupByLibrary.simpleMessage("Days"),
+    "description": MessageLookupByLibrary.simpleMessage("Description"),
+    "edit": MessageLookupByLibrary.simpleMessage("Edit"),
+    "end_date": MessageLookupByLibrary.simpleMessage("End Date"),
+    "enter_phone": MessageLookupByLibrary.simpleMessage(
+      "Please enter your number",
+    ),
+    "failed_to_cancel": MessageLookupByLibrary.simpleMessage(
+      "Failed to cancel",
+    ),
+    "favorites": MessageLookupByLibrary.simpleMessage("Favorites"),
+    "fill_field": MessageLookupByLibrary.simpleMessage(
+      "Please fill all fields",
+    ),
+    "filter_apartments": MessageLookupByLibrary.simpleMessage(
+      "Filter Apartments",
+    ),
+    "first_name": MessageLookupByLibrary.simpleMessage("First Name"),
+    "gallery": MessageLookupByLibrary.simpleMessage("Gallery"),
+    "governorate": MessageLookupByLibrary.simpleMessage("Governorate"),
     "home": MessageLookupByLibrary.simpleMessage("Home"),
+    "hotel_room": MessageLookupByLibrary.simpleMessage("Hotel Room"),
+    "last_name": MessageLookupByLibrary.simpleMessage("Last Name"),
+    "login": MessageLookupByLibrary.simpleMessage("Login"),
+    "logout": MessageLookupByLibrary.simpleMessage("Logout"),
+    "mazzeh": MessageLookupByLibrary.simpleMessage("Mazzeh"),
+    "midan": MessageLookupByLibrary.simpleMessage("Midan"),
+    "my_bookings": MessageLookupByLibrary.simpleMessage("My Bookings"),
+    "my_documents": MessageLookupByLibrary.simpleMessage("My Documents"),
     "night_mode": MessageLookupByLibrary.simpleMessage("Night Mode"),
-    "number": MessageLookupByLibrary.simpleMessage("enter your number"),
-    "passowrd": MessageLookupByLibrary.simpleMessage(" Enter your  password"),
-    "phone_requierd": MessageLookupByLibrary.simpleMessage(
+    "no": MessageLookupByLibrary.simpleMessage("No"),
+    "no_bookings_yet": MessageLookupByLibrary.simpleMessage("No bookings yet"),
+    "no_favorites_yet": MessageLookupByLibrary.simpleMessage(
+      "No favorites yet",
+    ),
+    "number": MessageLookupByLibrary.simpleMessage("Enter your number"),
+    "ok": MessageLookupByLibrary.simpleMessage("OK"),
+    "owner": MessageLookupByLibrary.simpleMessage("Owner"),
+    "password": MessageLookupByLibrary.simpleMessage("Enter your password"),
+    "passwords_match": MessageLookupByLibrary.simpleMessage(
+      "Passwords do not match",
+    ),
+    "per_night": MessageLookupByLibrary.simpleMessage("Price per night"),
+    "phone_required": MessageLookupByLibrary.simpleMessage(
       "Phone number is required",
     ),
+    "please_birth": MessageLookupByLibrary.simpleMessage(
+      "Please enter date of birth",
+    ),
+    "please_first": MessageLookupByLibrary.simpleMessage(
+      "Please enter first name",
+    ),
+    "please_identity_photo": MessageLookupByLibrary.simpleMessage(
+      "Please choose identity photo",
+    ),
+    "please_last": MessageLookupByLibrary.simpleMessage(
+      "Please enter last name",
+    ),
+    "please_password": MessageLookupByLibrary.simpleMessage(
+      "Please enter password",
+    ),
+    "please_personal_photo": MessageLookupByLibrary.simpleMessage(
+      "Please choose personal photo",
+    ),
+    "please_role": MessageLookupByLibrary.simpleMessage("Please choose role"),
+    "price_per_night": MessageLookupByLibrary.simpleMessage("Price per night"),
+    "price_range": MessageLookupByLibrary.simpleMessage("Price Range"),
+    "rooms": MessageLookupByLibrary.simpleMessage("Rooms"),
+    "rooms_label": MessageLookupByLibrary.simpleMessage("Rooms"),
+    "search": MessageLookupByLibrary.simpleMessage("Search..."),
+    "see_all": MessageLookupByLibrary.simpleMessage("See All"),
+    "select_dates_first": MessageLookupByLibrary.simpleMessage(
+      "Please select dates first",
+    ),
+    "select_end_date": MessageLookupByLibrary.simpleMessage("Select end date"),
+    "select_start_date": MessageLookupByLibrary.simpleMessage(
+      "Select start date",
+    ),
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
-    "signup": MessageLookupByLibrary.simpleMessage("signup"),
+    "signup": MessageLookupByLibrary.simpleMessage("Signup"),
+    "special_for_you": MessageLookupByLibrary.simpleMessage("Special For You"),
+    "start_date": MessageLookupByLibrary.simpleMessage("Start Date"),
+    "syria": MessageLookupByLibrary.simpleMessage("Syria"),
+    "tenant": MessageLookupByLibrary.simpleMessage("Tenant"),
     "title": MessageLookupByLibrary.simpleMessage("Welcome"),
+    "total": MessageLookupByLibrary.simpleMessage("Total"),
+    "update_booking": MessageLookupByLibrary.simpleMessage("Update Booking"),
+    "villa": MessageLookupByLibrary.simpleMessage("Villa"),
+    "yes": MessageLookupByLibrary.simpleMessage("Yes"),
   };
 }

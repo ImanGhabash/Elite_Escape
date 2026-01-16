@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task/generated/l10n.dart';
 
 class SignUpButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -16,7 +17,7 @@ class SignUpButton extends StatelessWidget {
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       ),
-      child: const Text('SignUp',
+      child:  Text( S.of(context).signup,
           style: TextStyle(fontSize: 18, color: Colors.white)),
     );
   }

@@ -77,7 +77,7 @@ class HomeDrawer extends ConsumerWidget {
 
         ListTile(
   leading: const Icon(Icons.logout),
-  title: Text(S.of(context).Logout),
+  title: Text(S.of(context).logout),
   onTap: () async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('token');

@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:task/controllers/rating_controller.dart';
 import 'package:task/view/Rating_Widget/CommentInputWidget.dart';
 import 'package:task/view/Rating_Widget/RatingStarsWidget.dart';
 import 'package:task/view/Rating_Widget/SendButtonWidget.dart';
-import 'package:task/models/Rating.dart';class RatingScreen extends StatefulWidget {
-  const RatingScreen({super.key});
+
+class RatingScreen extends ConsumerStatefulWidget {
+  final int apartmentId;
+
+  const RatingScreen({
+    super.key,
+    required this.apartmentId,
+  });
 
   @override
-  State<RatingScreen> createState() => _RatingScreenState();
+  ConsumerState<RatingScreen> createState() => _RatingScreenState();
 }
 
-class _RatingScreenState extends State<RatingScreen> {
+class _RatingScreenState extends ConsumerState<RatingScreen> {
   int selectedStars = 1;
   final TextEditingController commentController = TextEditingController();
-
-  List<Rating> ratingsList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -27,13 +33,6 @@ class _RatingScreenState extends State<RatingScreen> {
           decoration: BoxDecoration(
             color: const Color(0xffb7e4d8),
             borderRadius: BorderRadius.circular(25),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.25),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-            ],
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -47,7 +46,7 @@ class _RatingScreenState extends State<RatingScreen> {
               ),
 
               const SizedBox(height: 12),
- 
+
               RatingStarsWidget(
                 selectedStars: selectedStars,
                 onChanged: (value) {
@@ -59,31 +58,44 @@ class _RatingScreenState extends State<RatingScreen> {
 
               const SizedBox(height: 12),
 
-            
               CommentInputWidget(
                 controller: commentController,
               ),
 
               const SizedBox(height: 20),
 
-              SendButtonWidget(
-                onPressed: () {
-                  Rating rating = Rating( 
-                    stars: selectedStars,
-                    comment: commentController.text,
-                    userId: "user1",
-                    apartmentId: "apt1",
-                  );
+         SendButtonWidget(
+  onPressed: () async {
+    try {
+      await ref.read(reviewServiceProvider).addReview(
+        apartmentId: widget.apartmentId,
+        rating: selectedStars,
+        comment: commentController.text,
+      );
 
-                  setState(() {
-                    ratingsList.add(rating);
-                    commentController.clear();
-                    selectedStars = 1;
-                  });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Your review has been submitted successfully.'),
+          backgroundColor: Colors.green,
+        ),
+      );
 
-                  print("Rating added");
-                },
-              ),
+      commentController.clear();
+      setState(() {
+        selectedStars = 1;
+      });
+
+      Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("can't send your review because you have not booked it before"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  },
+),
             ],
           ),
         ),
@@ -91,3 +103,4 @@ class _RatingScreenState extends State<RatingScreen> {
     );
   }
 }
+

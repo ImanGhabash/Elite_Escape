@@ -29,25 +29,25 @@ class _LoginViewState extends ConsumerState<LoginView> {
   Widget build(BuildContext context) {
    
     ref.listen<AuthState>(authControllerProvider, (prev, next) async {
-      print('AUTH STATE CHANGED: $next');
+      // print('AUTH STATE CHANGED: $next');
 
       if (next is AuthError) {
-        print('AUTH ERROR');
+        // print('AUTH ERROR');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(next.message)),
         );
       }
 
       if (next is AuthSuccess) {
-        print('AUTH SUCCESS');
+        // print('AUTH SUCCESS');
         final token = next.token;
-        print('TOKEN: $token');
+        // print('TOKEN: $token');
   DioService().setToken(token);
         ref.read(tokenProvider.notifier).state = token;
 
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', token);
-        print('TOKEN SAVED');
+        // print('TOKEN SAVED');
 
         if (!mounted) return;
         Navigator.of(context).pushReplacement(
@@ -93,17 +93,17 @@ class _LoginViewState extends ConsumerState<LoginView> {
               LoginButton(
                 loading: authState is AuthLoading,
                 onPressed: () {
-                  print('LOGIN BUTTON PRESSED');
+                  // print('LOGIN BUTTON PRESSED');
 
                   if (mobileController.text.isEmpty ||
                       passwordController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                       SnackBar(content: Text(S.of(context).fillField)),
+                       SnackBar(content: Text(S.of(context).fill_field)),
                     );
                     return;
                   }
 
-                  print('CALLING LOGIN API');
+                  // print('CALLING LOGIN API');
                   ref.read(authControllerProvider.notifier).login(
                         mobile: mobileController.text.trim(),
                         password: passwordController.text.trim(),

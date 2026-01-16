@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task/generated/l10n.dart';
 
 class ApartmentFilterSheet extends StatefulWidget {
   const ApartmentFilterSheet({super.key});
@@ -26,29 +27,29 @@ class _ApartmentFilterSheetState extends State<ApartmentFilterSheet> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            'Filter Apartments',
+           Text(  S.of(context).filter_apartments
+            ,
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
           DropdownButtonFormField<String>(
-            hint: const Text('Governorate'),
-            items: ['Damascus', 'Syria']
+            hint:  Text( S.of(context).governorate),
+            items: ['Damascus', 'Latakia','Aleppo','Tartos']
                 .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                 .toList(),
             onChanged: (v) => governorate = v,
           ),
 
           DropdownButtonFormField<String>(
-            hint: const Text('City'),
-            items: ['Damascus', 'Midan', 'Mazzeh']
+            hint: Text( S.of(context).city),
+            items: ['Damascus', 'Midan', 'Mazzeh','Jableh',]
                 .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                 .toList(),
             onChanged: (v) => city = v,
           ),
 
           DropdownButtonFormField<int>(
-            hint: const Text('Rooms'),
+            hint: Text( S.of(context).rooms),
             items: [1, 2, 3, 4, 5]
                 .map((e) => DropdownMenuItem(value: e, child: Text('$e')))
                 .toList(),
@@ -57,7 +58,7 @@ class _ApartmentFilterSheetState extends State<ApartmentFilterSheet> {
 
           const SizedBox(height: 10),
 
-          Text('Price range'),
+          Text( S.of(context).price_range),
           RangeSlider(
             values: RangeValues(minPrice, maxPrice),
             min: 0,
@@ -81,7 +82,7 @@ class _ApartmentFilterSheetState extends State<ApartmentFilterSheet> {
                 'maxPrice': maxPrice,
               });
             },
-            child: const Text('Apply'),
+            child: Text( S.of(context).apply),
           ),
         ],
       ),

@@ -30,7 +30,7 @@ class PasswordField extends StatelessWidget {
         obscureText: visible,
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: S.of(context).passowrd,
+          hintText: S.of(context).password,
           suffixIcon: IconButton(
             icon: Icon(
               visible ? Icons.visibility : Icons.visibility_off,

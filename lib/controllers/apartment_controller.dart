@@ -10,13 +10,27 @@ class ProductController
     fetchProducts();
   }
 
+
   final ProductService _service = ProductService();
 
   List<Product> _allProducts = [];
 
+void search(String query) {
+  if (query.isEmpty) {
+    state = AsyncData(_allProducts);
+    return;
+  }
+
+  final filtered = _allProducts.where((p) {
+    final title = (p.title ?? '').toLowerCase();
+    return title.contains(query.toLowerCase());
+  }).toList();
+
+  state = AsyncData(filtered);
+}
   Future<void> fetchProducts() async {
     try {
-      final products = await _service.fetchProducts(); // 👈 هون التعديل المهم
+      final products = await _service.fetchProducts(); 
       _allProducts = products;
       state = AsyncData(products);
     } catch (e, st) {

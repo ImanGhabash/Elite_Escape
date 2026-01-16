@@ -23,7 +23,7 @@ class LoginButton extends StatelessWidget {
       ),
       child: loading
           ? const CircularProgressIndicator(color: Colors.white)
-          :  Text(S.of(context).Login,
+          :  Text(S.of(context).login,
               style: TextStyle(fontSize: 18, color: Colors.white)),
     );
   }

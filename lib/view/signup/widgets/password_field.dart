@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task/generated/l10n.dart';
 import '../../../core/theme/app_colors.dart';
 
 class PasswordField extends StatelessWidget {
@@ -47,7 +48,7 @@ class PasswordField extends StatelessWidget {
         validator: validator ??
             (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter password';
+                return  S.of(context).please_password;
               }
               return null;
             },

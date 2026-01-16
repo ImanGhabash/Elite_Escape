@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task/generated/l10n.dart';
 import '../../../core/theme/app_colors.dart';
 
 class PhoneField extends StatelessWidget {
@@ -36,7 +37,7 @@ class PhoneField extends StatelessWidget {
         validator: validator ??
             (value) {
               if (value == null || value.isEmpty) {
-                return 'Phone number is required';
+                return  S.of(context).phone_required;
               }
               return null;
             },

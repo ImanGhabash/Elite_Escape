@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task/generated/l10n.dart';
 import '../../../core/theme/app_colors.dart';
 
 import 'package:task/controllers/auth_controller.dart'; // يحتوي على UserRole
@@ -18,9 +19,9 @@ class RoleSelector extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _roleCard(UserRole.owner, 'Owner', Icons.home_work_outlined),
+        _roleCard(UserRole.owner,  S.of(context).owner, Icons.home_work_outlined),
         const SizedBox(width: 20),
-        _roleCard(UserRole.tenant, 'Tenant', Icons.key_outlined),
+        _roleCard(UserRole.tenant,  S.of(context).tenant, Icons.key_outlined),
       ],
     );
   }

@@ -2,11 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task/controllers/favorite_controller.dart';
+import 'package:task/generated/l10n.dart';
 import 'package:task/models/apartment_model.dart';
 import 'package:task/view/Home/Widget/product_card.dart';
+import 'package:task/view/Rating_Widget/RatingScreen.dart';
 import 'package:task/view/booking.dart';
-// import 'package:task/models/product.dart';
-// import 'package:task/view/booking.dart';
 
 const Color darkTeal = Color(0xFF285260);
 const Color mediumTeal = Color(0xFF5A9C92);
@@ -16,10 +16,7 @@ const Color tanBrown = Color(0xFFAA8872);
 class PropertyDetailsScreen extends ConsumerWidget {
   final Product apartment;
 
-  const PropertyDetailsScreen({
-    super.key,
-    required this.apartment,
-  });
+  const PropertyDetailsScreen({super.key, required this.apartment});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -30,6 +27,7 @@ class PropertyDetailsScreen extends ConsumerWidget {
           _imageSection(context, ref),
           _detailsSection(),
           _bookNowButton(context, apartment),
+          _rateButton(context),
         ],
       ),
     );
@@ -111,9 +109,15 @@ class PropertyDetailsScreen extends ConsumerWidget {
             children: [
               _titleAndRate(),
               const SizedBox(height: 12),
-              _priceAndRooms(),
+              _priceAndRooms(context),
               const SizedBox(height: 20),
-              _description(),
+              _description(context),
+              const SizedBox(height: 20),
+
+              gov(),
+              city(),
+
+              const SizedBox(height: 20),
             ],
           ),
         );
@@ -122,42 +126,44 @@ class PropertyDetailsScreen extends ConsumerWidget {
   }
 
   Widget _titleAndRate() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: Text(
-            apartment.title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        // Row(
-        //   children: [
-        //     const Icon(Icons.star, color: Colors.amber, size: 18),
-        //     const SizedBox(width: 4),
-        //     Text(
-        //       apartment.rate != null ? apartment.rate.toString() : '0',
-        //       style: const TextStyle(
-        //         color: Colors.white,
-        //         fontWeight: FontWeight.w600,
-        //       ),
-        //     ),
-        //   ],
-        // ),
-      ],
+    return Text(
+      apartment.title,
+      style: const TextStyle(
+        color: Colors.white,
+        fontSize: 22,
+        fontWeight: FontWeight.bold,
+      ),
     );
   }
 
-  Widget _priceAndRooms() {
+  city() {
+    return Text(
+      apartment.city,
+      style: const TextStyle(
+        color: Colors.white,
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  gov() {
+    return Text(
+      apartment.governorate,
+      style: const TextStyle(
+        color: Colors.white,
+        fontSize: 22,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  Widget _priceAndRooms(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          "\$${apartment.dailyPrice.toStringAsFixed(2)} / night",
+          "\$${apartment.dailyPrice.toStringAsFixed(2)} ${S.of(context).per_night}",
           style: const TextStyle(
             color: Colors.white,
             fontSize: 20,
@@ -165,20 +171,23 @@ class PropertyDetailsScreen extends ConsumerWidget {
           ),
         ),
         Text(
-          "${apartment.numberOfRooms} Rooms",
+          "${apartment.numberOfRooms} ${S.of(context).rooms_label}",
           style: const TextStyle(color: Colors.white70),
         ),
       ],
     );
   }
 
-  Widget _description() {
+  Widget _description(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Description',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        Text(
+          S.of(context).description,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 8),
         Text(
@@ -211,9 +220,9 @@ class PropertyDetailsScreen extends ConsumerWidget {
               ),
             );
           },
-          child: const Text(
-            "Book Now",
-            style: TextStyle(
+          child: Text(
+            S.of(context).book_now,
+            style: const TextStyle(
               fontSize: 18,
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -225,6 +234,11 @@ class PropertyDetailsScreen extends ConsumerWidget {
   }
 
   Widget _favoriteButton(WidgetRef ref) {
+    final favorites = ref.watch(favoritesProvider);
+    final notifier = ref.read(favoritesProvider.notifier);
+
+    final isFav = favorites.any((p) => p.id == apartment.id);
+
     return Positioned(
       top: 40,
       right: 20,
@@ -232,19 +246,44 @@ class PropertyDetailsScreen extends ConsumerWidget {
         backgroundColor: Colors.black45,
         child: IconButton(
           icon: Icon(
-            ref.watch(favoritesProvider.notifier).isFavorite(apartment)
-                ? Icons.favorite
-                : Icons.favorite_border,
-            color: Colors.red,
+            isFav ? Icons.favorite : Icons.favorite_border,
+            color: isFav ? Colors.red : Colors.white,
           ),
           onPressed: () {
-            final notifier = ref.read(favoritesProvider.notifier);
-            if (notifier.isFavorite(apartment)) {
-              notifier.remove(apartment);
-            } else {
-              notifier.add(apartment);
-            }
+            notifier.toggle(apartment);
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _rateButton(BuildContext context) {
+    return Positioned(
+      bottom: 90,
+      left: 16,
+      right: 16,
+      child: SizedBox(
+        height: 30,
+        width: 70,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.orange,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => RatingScreen(apartmentId: apartment.id),
+              ),
+            );
+          },
+          child: Text(
+            S.of(context).Rate_this_Apartment,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
         ),
       ),
     );
